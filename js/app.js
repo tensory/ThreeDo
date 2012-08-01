@@ -4,7 +4,6 @@ window.Todo = Backbone.Model.extend({
         title: 'Untitled'
     }
 });
-
 window.List = Backbone.Collection.extend({
     model: Todo
 });
@@ -14,76 +13,32 @@ window.AppView = Backbone.View.extend({
     initialize: function() {
         console.log('Initializing app');
         this.addView = new AddView();
-        this.listsView = new ListsView();
 
+        this.todoListView = new ListView({
+            collection: new List(),
+            attributes: {
+                id: 'todoList'
+            }
+        });
         this.render();
-
-        var firstColumn = new ListView( { collection: new List() });
-
     },
 
-
     el: 'body',
-    column: '',
+
     render: function() {
         // todo: DRY
         $(this.el).append(this.addView.render().el);
-        $(this.el).append(this.listsView.render().el);
 
-        // First list panel is the 'To Do' side.
-        var first = $('#to_do ul').get(0);
-        window.console.log(first);
-
-    }
-});
-
-/*
-   ListsView is the renderer for all Lists (3, in this case)
-   while ListView renders just one list.
- */
-window.ListsView = Backbone.View.extend({
-    initialize: function() {
-        this.template = _.template(tpl.get('lists'));
-    },
-
-    id: 'lists',
-
-    render: function() {
-        $(this.el).html(this.template);
-        this.setListViews();
-        return this;
-    },
-
-    lists: [],
-
-    setListViews: function() {
-        var containers = $(this.el).find('.list');
-        _.each(containers, function(element) {
-            var v = new ListView( { collection: new List() });
-            $(element).append(v.render().el);
-        });
-    },
-
-    // Init collection of Lists.
-    getTodoList: function() {
-        var containers = $(this.el).find('.list'),
-            list = new ListView({ collection: new List() });
-
-        /*
-        _.each(containers, function(element) {
-            window.console.log(element);
-            var listUlView = new ListView( { collection: new List() });
-            self.lists.push(listUlView);
-            $(element).append(listUlView.render().el);
-            //$(element).append(new ListView().render().el);
-            //window.console.log(new ListView( { collection: new List() }));
-
-        });
-        //window.console.log($(this.el).find('.list'));
-        return self.lists;
-    }
-
-   */
+        // Add list container
+        var listsContainer = $(tpl.get('lists'));
+            /*,
+            list = _.template(tpl.get('list'), {
+                listContents: self.todoListView.render().el
+            });
+              */
+        $(this.el).append(listsContainer);
+        var list = $(listsContainer).append(this.todoListView.render().el);
+        $(this.el).append(list);
     }
 });
 
@@ -116,12 +71,13 @@ window.TodoView = Backbone.View.extend({
         this.render();
     },
     render: function() {
-        // This template expects a title variable.
         var params = {
             todoTitle: this.title
-        };
-        $(this.el).append(_.template(tpl.get('todo'), params));
-        return this;
+        }
+        // Reassign element to container loaded from template
+        $(this.el).unbind();
+        this.el = _.template(tpl.get('todo'), params);
+        this.delegateEvents();
     }
 
 });
@@ -129,23 +85,25 @@ window.AddView = Backbone.View.extend({
     initialize: function() {
         this.template = _.template(tpl.get('add'));
     },
+
     render: function() {
         $(this.el).html(this.template);
         return this;
     },
+
     events: {
         'click #add': "addToDo"
     },
+
     addToDo: function() {
         // Delegate the list adding action to the ListView
-        window.console.log(window.app.column.insert);
-        //window.app.column.insert({title: 'New Todo'});
+        window.app.todoListView.insert({title: 'New Todo'});
     }
 });
 
 // Template loader by C. Coenraets.
 // https://github.com/ccoenraets/backbone-directory/blob/master/jquerymobile/js/utils.js
-var tpl = {
+tpl = {
     templates: {},
 
     loadTemplates: function(names, callback) {
@@ -172,23 +130,6 @@ var tpl = {
     }
 };
 
-/* Eventual wrapper class.
-ListView = function(name) {
-    return new Backbone.View.extend({
-        initialize: function() {
-            this.template = _.template(tpl.get('list'));
-        },
-
-        render: function() {
-            var header = '.head';
-            $(this.el).html(this.template);
-            $(this.el + ' ' + header).html(this.title);
-            return this;
-        },
-        title: name
-    });
-}
-*/
 (function($) {
     $(function() {
         tpl.loadTemplates(['add', 'todo', 'lists'],
@@ -198,5 +139,3 @@ ListView = function(name) {
         )
     });
 })(jQuery);
-
-// Next: show data
