@@ -30,7 +30,11 @@ window.AppView = Backbone.View.extend({
     render: function() {
         // todo: DRY
         $(this.el).append(this.addView.render().el);
-        $(this.el).append(this.todoListView.render().el);
+
+        // Add list container
+        var listContainer = $(tpl.get('lists'));
+        $(this.el).append(listContainer);
+        $(listContainer).append(this.todoListView.render().el);
 
     }
 });
