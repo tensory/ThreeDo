@@ -20,6 +20,9 @@ window.AppView = Backbone.View.extend({
                 id: 'todoList'
             }
         });
+
+        _.extend(this, this.createListViews());
+
         this.render();
     },
 
@@ -39,6 +42,33 @@ window.AppView = Backbone.View.extend({
         $(this.el).append(listsContainer);
         var list = $(listsContainer).append(this.todoListView.render().el);
         $(this.el).append(list);
+    },
+
+    createListViews: function() {
+        var lists= {};
+
+        lists.todoListView = new ListView({
+            collection: new List(),
+            attributes: {
+                id: 'todoList'
+            }
+        });
+
+        lists.inProcessListView = new ListView({
+            collection: new List(),
+            attributes: {
+                id: 'in-processList'
+            }
+        });
+
+        lists.doneListView = new ListView({
+            collection: new List(),
+            attributes: {
+                id: 'doneList'
+            }
+        });
+
+        return lists;
     }
 });
 
