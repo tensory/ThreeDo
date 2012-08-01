@@ -35,8 +35,9 @@ window.ListView = Backbone.View.extend({
     initialize: function() {
         var current = this;
         this.collection.on('add', function(todo, collection, options) {
-
+            // Track the index
             window.console.log('tried to add new element at position ' + options.index);
+            window.console.log(todo.get('title'))
 
             var task = new TodoView(todo.get('title'));
             $(current.el).append($(task.el));
@@ -52,16 +53,16 @@ window.ListView = Backbone.View.extend({
 });
 
 window.TodoView = Backbone.View.extend({
+    title: '',
     initialize: function(title) {
         this.title = title;
-        window.console.log(this.title);
         this.render();
-
     },
-    tagName: 'li',
     render: function() {
-        this.template = _.template(tpl.get('todo'));
-        $(this.el).html(this.title);
+        var params = {
+            todoTitle: this.title
+        }
+        $(this.el).append(_.template(tpl.get('todo'), params));
     }
 
 });
@@ -80,10 +81,7 @@ window.AddView = Backbone.View.extend({
     },
 
     addToDo: function() {
-        // Update the Todos list column with a new element
-        // which list column is that?
-
-        window.console.log('adding new todo');
+        // Delegate the list adding action to the ListView
         window.app.listView.insert({title: 'New Todo'});
     }
 });
