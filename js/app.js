@@ -1,5 +1,9 @@
 /* Models */
-window.Todo = Backbone.Model.extend();
+window.Todo = Backbone.Model.extend({
+    defaults: {
+        title: 'Untitled'
+    }
+});
 window.List = Backbone.Collection.extend({
     model: Todo
 });
@@ -19,6 +23,7 @@ window.AppView = Backbone.View.extend({
     el: 'body',
 
     render: function() {
+        // todo: DRY
         $(this.el).append(this.addView.render().el);
         $(this.el).append(this.listView.render().el);
 
@@ -28,10 +33,14 @@ window.AppView = Backbone.View.extend({
 window.ListView = Backbone.View.extend({
     tagName: 'ul',
     initialize: function() {
-        this.collection.bind('add', function() {
-            window.console.log('tried to add new element');
-            window.console.log(arguments[0]);
-        }, this);
+        var current = this;
+        this.collection.on('add', function(todo, collection, options) {
+
+            window.console.log('tried to add new element at position ' + options.index);
+
+            var task = new TodoView(todo.get('title'));
+            $(current.el).append($(task.el));
+        });
     },
     render: function() {
         return this;
@@ -43,9 +52,18 @@ window.ListView = Backbone.View.extend({
 });
 
 window.TodoView = Backbone.View.extend({
-    initialize: function() {
+    initialize: function(title) {
+        this.title = title;
+        window.console.log(this.title);
+        this.render();
+
+    },
+    tagName: 'li',
+    render: function() {
         this.template = _.template(tpl.get('todo'));
+        $(this.el).html(this.title);
     }
+
 });
 window.AddView = Backbone.View.extend({
     initialize: function() {
@@ -58,15 +76,15 @@ window.AddView = Backbone.View.extend({
     },
 
     events: {
-        'click #add': "newToDo"
+        'click #add': "addToDo"
     },
 
-    newToDo: function() {
+    addToDo: function() {
         // Update the Todos list column with a new element
         // which list column is that?
 
         window.console.log('adding new todo');
-        window.app.listView.insert({title: 'foooooop'});
+        window.app.listView.insert({title: 'New Todo'});
     }
 });
 
@@ -118,7 +136,7 @@ ListView = function(name) {
 */
 (function($) {
     $(function() {
-        tpl.loadTemplates(['add', 'list'],
+        tpl.loadTemplates(['add', 'todo', 'lists'],
             function() {
                 window.app = new AppView();
             }
@@ -126,8 +144,4 @@ ListView = function(name) {
     });
 })(jQuery);
 
-
-// what needs to happen now:
-
-// jslint!!!
-// test!!!
+// Next: show data
