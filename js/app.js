@@ -14,7 +14,12 @@ window.AppView = Backbone.View.extend({
         console.log('Initializing app');
         this.addView = new AddView();
 
-        this.listView = new ListView({collection: new List()});
+        this.todoListView = new ListView({
+            collection: new List(),
+            attributes: {
+                id: 'todoList'
+            }
+        });
 
 
         this.render();
@@ -25,7 +30,7 @@ window.AppView = Backbone.View.extend({
     render: function() {
         // todo: DRY
         $(this.el).append(this.addView.render().el);
-        $(this.el).append(this.listView.render().el);
+        $(this.el).append(this.todoListView.render().el);
 
     }
 });
@@ -82,7 +87,7 @@ window.AddView = Backbone.View.extend({
 
     addToDo: function() {
         // Delegate the list adding action to the ListView
-        window.app.listView.insert({title: 'New Todo'});
+        window.app.todoListView.insert({title: 'New Todo'});
     }
 });
 
@@ -141,5 +146,3 @@ ListView = function(name) {
         )
     });
 })(jQuery);
-
-// Next: show data
