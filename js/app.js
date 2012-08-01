@@ -119,7 +119,7 @@ window.AddView = Backbone.View.extend({
 
 // Template loader by C. Coenraets.
 // https://github.com/ccoenraets/backbone-directory/blob/master/jquerymobile/js/utils.js
-tpl = {
+var tpl = {
     templates: {},
 
     loadTemplates: function(names, callback) {
@@ -146,7 +146,7 @@ tpl = {
     }
 };
 
-utils = {
+var utils = {
     // Camel-caser is used to help generate ListView property names
     camelCase: function(string) {
         return string.replace(/(\-[a-z])/g, function(str) {
