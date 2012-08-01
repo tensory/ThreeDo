@@ -1,14 +1,17 @@
+/* Models */
 window.Todo = Backbone.Model.extend();
-
 window.List = Backbone.Collection.extend({
     model: Todo
 });
 
-
+/* Views */
 window.AppView = Backbone.View.extend({
     initialize: function() {
         console.log('Initializing app');
         this.addView = new AddView();
+
+        this.listView = new ListView({collection: new List()});
+
 
         this.render();
     },
@@ -16,10 +19,34 @@ window.AppView = Backbone.View.extend({
     el: 'body',
 
     render: function() {
-        $(this.el).html(this.addView.render().el);
+        $(this.el).append(this.addView.render().el);
+        $(this.el).append(this.listView.render().el);
+
     }
 });
 
+window.ListView = Backbone.View.extend({
+    tagName: 'ul',
+    initialize: function() {
+        this.collection.bind('add', function() {
+            window.console.log('tried to add new element');
+            window.console.log(arguments[0]);
+        }, this);
+    },
+    render: function() {
+        return this;
+    },
+
+    insert: function(todoItem) {
+        this.collection.add(todoItem);
+    }
+});
+
+window.TodoView = Backbone.View.extend({
+    initialize: function() {
+        this.template = _.template(tpl.get('todo'));
+    }
+});
 window.AddView = Backbone.View.extend({
     initialize: function() {
         this.template = _.template(tpl.get('add'));
@@ -35,8 +62,11 @@ window.AddView = Backbone.View.extend({
     },
 
     newToDo: function() {
-        window.console.log('adding new todo');
+        // Update the Todos list column with a new element
+        // which list column is that?
 
+        window.console.log('adding new todo');
+        window.app.listView.insert({title: 'foooooop'});
     }
 });
 
@@ -69,12 +99,35 @@ tpl = {
     }
 };
 
+/* Eventual wrapper class.
+ListView = function(name) {
+    return new Backbone.View.extend({
+        initialize: function() {
+            this.template = _.template(tpl.get('list'));
+        },
+
+        render: function() {
+            var header = '.head';
+            $(this.el).html(this.template);
+            $(this.el + ' ' + header).html(this.title);
+            return this;
+        },
+        title: name
+    });
+}
+*/
 (function($) {
     $(function() {
-        tpl.loadTemplates(['add'],
+        tpl.loadTemplates(['add', 'list'],
             function() {
-                var app = new AppView();
+                window.app = new AppView();
             }
         )
     });
 })(jQuery);
+
+
+// what needs to happen now:
+
+// jslint!!!
+// test!!!
