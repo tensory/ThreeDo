@@ -37,7 +37,7 @@ window.AppView = Backbone.View.extend({
             });
               */
         $(this.el).append(listsContainer);
-        var list = $(tpl.get('list')).append(this.todoListView.render().el);
+        var list = $(listsContainer).append(this.todoListView.render().el);
         $(this.el).append(list);
     }
 });
@@ -132,7 +132,7 @@ tpl = {
 
 (function($) {
     $(function() {
-        tpl.loadTemplates(['add', 'todo', 'list', 'lists'],
+        tpl.loadTemplates(['add', 'todo', 'lists'],
             function() {
                 window.app = new AppView();
             }
