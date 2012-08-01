@@ -14,7 +14,8 @@ window.AppView = Backbone.View.extend({
         console.log('Initializing app');
         this.addView = new AddView();
 
-        _.extend(this, this.createListViews(['todo', 'in-process', 'done']));
+        _.extend(this, this.createListViews(this.columnNames));
+        // By this point, window.app.todoListView MUST exist in order for 'add' to work!
 
         this.render();
     },
@@ -24,17 +25,18 @@ window.AppView = Backbone.View.extend({
     render: function() {
         // todo: DRY
         $(this.el).append(this.addView.render().el);
+        var self = this;
 
-        // Add list container
+        // Add container for all 3 lists
         var listsContainer = $(tpl.get('lists'));
-            /*,
-            list = _.template(tpl.get('list'), {
-                listContents: self.todoListView.render().el
-            });
-              */
         $(this.el).append(listsContainer);
-        var list = $(listsContainer).append(this.todoListView.render().el);
-        $(this.el).append(list);
+
+        // Add empty lists to columns
+        _.each(this.columnNames, function(col) {
+            var list = self[utils.camelCase(col) + 'ListView'].render().el;
+            $(listsContainer).find('div[data-label="' + col + '"]').append(list);
+        });
+
     },
 
     // Generate ListView objects for the 3 main columns used by the app view
@@ -51,7 +53,9 @@ window.AppView = Backbone.View.extend({
         });
 
         return lists;
-    }
+    },
+
+    columnNames: ['todo', 'in-process', 'done']
 });
 
 window.ListView = Backbone.View.extend({
