@@ -1,3 +1,10 @@
+window.Todo = Backbone.Model.extend();
+
+window.List = Backbone.Collection.extend({
+    model: Todo
+});
+
+
 window.AppView = Backbone.View.extend({
     initialize: function() {
         console.log('Initializing app');
@@ -29,6 +36,7 @@ window.AddView = Backbone.View.extend({
 
     newToDo: function() {
         window.console.log('adding new todo');
+
     }
 });
 
