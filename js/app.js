@@ -36,7 +36,7 @@ window.AppView = Backbone.View.extend({
             var list = self[utils.camelCase(col) + 'ListView'].render().el;
             $(listsContainer).find('div[data-label="' + col + '"]').append(list);
         });
-
+        return this;
     },
 
     // Generate ListView objects for the 3 main columns used by the app view
@@ -94,6 +94,7 @@ window.TodoView = Backbone.View.extend({
         $(this.el).unbind();
         this.el = _.template(tpl.get('todo'), params);
         this.delegateEvents();
+        return this;
     }
 
 });
