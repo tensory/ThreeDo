@@ -20,8 +20,6 @@ window.AppView = Backbone.View.extend({
                 id: 'todoList'
             }
         });
-
-
         this.render();
     },
 
@@ -32,10 +30,15 @@ window.AppView = Backbone.View.extend({
         $(this.el).append(this.addView.render().el);
 
         // Add list container
-        var listContainer = $(tpl.get('lists'));
-        $(this.el).append(listContainer);
-        $(listContainer).append(this.todoListView.render().el);
-
+        var listsContainer = $(tpl.get('lists'));
+            /*,
+            list = _.template(tpl.get('list'), {
+                listContents: self.todoListView.render().el
+            });
+              */
+        $(this.el).append(listsContainer);
+        var list = $(tpl.get('list')).append(this.todoListView.render().el);
+        $(this.el).append(list);
     }
 });
 
@@ -127,26 +130,9 @@ tpl = {
     }
 };
 
-/* Eventual wrapper class.
-ListView = function(name) {
-    return new Backbone.View.extend({
-        initialize: function() {
-            this.template = _.template(tpl.get('list'));
-        },
-
-        render: function() {
-            var header = '.head';
-            $(this.el).html(this.template);
-            $(this.el + ' ' + header).html(this.title);
-            return this;
-        },
-        title: name
-    });
-}
-*/
 (function($) {
     $(function() {
-        tpl.loadTemplates(['add', 'todo', 'lists'],
+        tpl.loadTemplates(['add', 'todo', 'list', 'lists'],
             function() {
                 window.app = new AppView();
             }
