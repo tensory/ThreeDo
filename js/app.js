@@ -14,14 +14,7 @@ window.AppView = Backbone.View.extend({
         console.log('Initializing app');
         this.addView = new AddView();
 
-        this.todoListView = new ListView({
-            collection: new List(),
-            attributes: {
-                id: 'todoList'
-            }
-        });
-
-        _.extend(this, this.createListViews());
+        _.extend(this, this.createListViews(['todo', 'in-process', 'done']));
 
         this.render();
     },
@@ -44,28 +37,17 @@ window.AppView = Backbone.View.extend({
         $(this.el).append(list);
     },
 
-    createListViews: function() {
-        var lists= {};
-
-        lists.todoListView = new ListView({
-            collection: new List(),
-            attributes: {
-                id: 'todoList'
-            }
-        });
-
-        lists.inProcessListView = new ListView({
-            collection: new List(),
-            attributes: {
-                id: 'in-processList'
-            }
-        });
-
-        lists.doneListView = new ListView({
-            collection: new List(),
-            attributes: {
-                id: 'doneList'
-            }
+    // Generate ListView objects for the 3 main columns used by the app view
+    createListViews: function(names) {
+        var lists = {};
+        _.each(names, function(rawName) {
+            var camelCasedName = utils.camelCase(rawName) + 'ListView';
+            lists[camelCasedName] = new ListView({
+                collection: new List(),
+                attributes: {
+                    id: rawName + 'List'
+                }
+            });
         });
 
         return lists;
@@ -157,6 +139,15 @@ tpl = {
     },
     get: function(filename) {
         return this.templates[filename];
+    }
+};
+
+utils = {
+    // Camel-caser is used to help generate ListView property names
+    camelCase: function(string) {
+        return string.replace(/(\-[a-z])/g, function(str) {
+            return str.toUpperCase().replace('-','');
+        });
     }
 };
 
