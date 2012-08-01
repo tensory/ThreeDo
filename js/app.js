@@ -71,7 +71,10 @@ window.TodoView = Backbone.View.extend({
         var params = {
             todoTitle: this.title
         }
-        $(this.el).append(_.template(tpl.get('todo'), params));
+        // Reassign element to container loaded from template
+        $(this.el).unbind();
+        this.el = _.template(tpl.get('todo'), params);
+        this.delegateEvents();
     }
 
 });
