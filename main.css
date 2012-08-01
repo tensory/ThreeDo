@@ -1,0 +1,54 @@
+html, body {
+    height: 100%;
+}
+
+body {
+    font-size: 14px;
+    background-color: #AAAAAA;
+}
+
+#lists {
+    margin: 0 auto;
+    position: relative;
+    width: 1200px;
+    box-sizing: border-box;
+}
+
+.list {
+    width: 390px;
+    float: left;
+    margin-right: 10px;
+    background-color: #faf0e6;
+}
+
+.list h1 {
+    padding-left: 24px;
+}
+
+.list:last-of-type {
+    margin-right: 0;
+}
+
+.list ul {
+    background-color: #FFFFFF;
+    margin-bottom: 0;
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+.list ul li {
+    line-height: 60px;
+    border-top: 1px solid #888;
+    margin: 0;
+    padding-left: 24px;
+
+}
+
+.clear {
+    clear: both;
+}
+
+.clear hr {
+    display: none;
+}
