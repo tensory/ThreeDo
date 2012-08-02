@@ -4,8 +4,13 @@ window.Todo = Backbone.Model.extend({
         title: 'Untitled'
     }
 });
+
 window.List = Backbone.Collection.extend({
     model: Todo
+});
+
+window.Counter = Backbone.Model.extend({
+    dataSources: []
 });
 
 /* Views */
@@ -13,11 +18,14 @@ window.AppView = Backbone.View.extend({
     initialize: function() {
         console.log('Initializing app');
         this.addView = new AddView();
-        this.totalCounter = new CounterView();
 
         this.lists = {};
         _.extend(this.lists, this.createListViews(this.columnNames));
         // By this point, window.app.todoListView MUST exist in order for 'add' to work!
+
+        this.totalCounter = new CounterView({
+            model: new Counter({ dataSources: _.values(this.lists) })
+        });
 
         this.render();
     },
@@ -104,14 +112,17 @@ window.CounterView = Backbone.View.extend({
 
     initialize: function() {
         this.template = _.template(tpl.get('counter'), { number: '0' });
+        window.console.log(this.model);
     },
 
     render: function() {
         $(this.el).html($(this.template));
+        this.update();
         return this;
     },
 
     update: function() {
+        window.console.log(this.model.get('dataSources'));
 
     }
 });
