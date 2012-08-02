@@ -1,7 +1,7 @@
 /* Models */
 window.Todo = Backbone.Model.extend({
     defaults: {
-        title: 'Untitled'
+        title: 'Untitled',
     }
 });
 
@@ -43,6 +43,7 @@ window.AppView = Backbone.View.extend({
         $(this.el).append(listsContainer);
 
         // Add empty lists to columns
+        // Wow this is gross. Clean it up.
         _.each(this.columnNames, function(col) {
             var list = self.lists[utils.camelCase(col) + 'ListView'].render().el,
                 listContainer = $(listsContainer).find('div[data-label="' + col + '"]');
@@ -82,7 +83,11 @@ window.ListView = Backbone.View.extend({
             // Track the index
             window.console.log('tried to add new element at position ' + options.index);
 
-            var task = new TodoView(todo.get('title'));
+
+            var todoModel = new Todo({ title: todo.get('title') });
+            // Give the item an id manually, since no create event is doing that
+            _.extend(todoModel, { id: todoModel.cid });
+            var task = new TodoView(todoModel);
             $(current.el).append($(task.el));
 
             window.app.totalCounter.update();
@@ -99,7 +104,6 @@ window.ListView = Backbone.View.extend({
 
         window.console.log(this.counter.render().el);
 
-        window.console.log(this.el);
         $(this.el).droppable(droppableArgs);
         return this;
     },
@@ -171,13 +175,12 @@ window.TodoView = Backbone.View.extend({
                 $(this).hide();
             }
         };
-
-        $(this.el).html(_.template(tpl.get('todo'), { todoTitle: this.title }));
+        $(this.el).html(_.template(tpl.get('todo'), { todoTitle: this.attributes.title }));
         $(this.el).draggable(draggableOptions);
         return this;
     }
-
 });
+
 window.AddView = Backbone.View.extend({
     initialize: function() {
         this.template = _.template(tpl.get('add'));
