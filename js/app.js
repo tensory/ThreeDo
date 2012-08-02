@@ -20,7 +20,7 @@ window.AppView = Backbone.View.extend({
         this.addView = new AddView();
 
         this.lists = {};
-        _.extend(this.lists, this.createListViews(this.columnNames));
+        _.extend(this.lists, this._createListViews(this.columnNames));
         // By this point, window.app.lists.todoListView MUST exist in order for 'add' to work!
 
         this.totalCounter = new CounterView({
@@ -44,14 +44,16 @@ window.AppView = Backbone.View.extend({
 
         // Add empty lists to columns
         _.each(this.columnNames, function(col) {
-            var list = self.lists[utils.camelCase(col) + 'ListView'].render().el;
-            $(listsContainer).find('div[data-label="' + col + '"]').append(list);
+            var list = self.lists[utils.camelCase(col) + 'ListView'].render().el,
+                listContainer = $(listsContainer).find('div[data-label="' + col + '"]');
+            listContainer.find('h1').after(self.lists[utils.camelCase(col) + 'ListView'].counter.render().el);
+            listContainer.append(list);
         });
         return this;
     },
 
     // Generate ListView objects for the 3 main columns used by the app view
-    createListViews: function(names) {
+    _createListViews: function(names) {
         var lists = {};
         _.each(names, function(rawName) {
             var camelCasedName = utils.camelCase(rawName) + 'ListView';
@@ -73,6 +75,9 @@ window.ListView = Backbone.View.extend({
     tagName: 'ul',
     initialize: function() {
         var current = this;
+
+        this.counter = new CounterView({ model: new Counter({ dataSources: [this.el] }) });
+
         this.collection.on('add', function(todo, collection, options) {
             // Track the index
             window.console.log('tried to add new element at position ' + options.index);
@@ -91,6 +96,10 @@ window.ListView = Backbone.View.extend({
                 current._receiveTodoItem(dragged);
             }
         }
+
+        window.console.log(this.counter.render().el);
+
+        window.console.log(this.el);
         $(this.el).droppable(droppableArgs);
         return this;
     },
