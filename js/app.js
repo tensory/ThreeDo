@@ -114,7 +114,6 @@ window.CounterView = Backbone.View.extend({
 
     initialize: function() {
         this.update();
-        window.console.log(this.model);
     },
 
     render: function() {
@@ -134,7 +133,6 @@ window.CounterView = Backbone.View.extend({
     // Get the count from all the data sources this instance of Counter knows about
     _getCountFromSources: function() {
         var count = 0;
-        window.console.log(this.model.get('dataSources'));
         _.each(this.model.get('dataSources'), function(view) {
             count += $(view.el).children('li').length;
         });
@@ -232,7 +230,6 @@ var dragged = null;
         tpl.loadTemplates(['add', 'todo', 'counter', 'lists'],
             function() {
                 window.app = new AppView();
-            }
-        )
+            });
     });
 })(jQuery);
