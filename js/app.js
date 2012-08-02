@@ -65,7 +65,6 @@ window.ListView = Backbone.View.extend({
         this.collection.on('add', function(todo, collection, options) {
             // Track the index
             window.console.log('tried to add new element at position ' + options.index);
-            window.console.log(todo.get('title'))
 
             var task = new TodoView(todo.get('title'));
             $(current.el).append($(task.el));
@@ -91,9 +90,7 @@ window.TodoView = Backbone.View.extend({
             todoTitle: this.title
         }
         // Reassign element to container loaded from template
-        $(this.el).unbind();
         this.el = _.template(tpl.get('todo'), params);
-        this.delegateEvents();
         return this;
     }
 
