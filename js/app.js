@@ -138,7 +138,7 @@ window.AddView = Backbone.View.extend({
 
     addToDo: function() {
         // Delegate the list adding action to the ListView
-        window.app.inProcessListView.insert({title: 'New Todo'});
+        window.app.todoListView.insert({title: 'New Todo'});
     }
 });
 
