@@ -35,11 +35,6 @@ window.AppView = Backbone.View.extend({
         _.each(this.columnNames, function(col) {
             var list = self[utils.camelCase(col) + 'ListView'].render().el;
             $(listsContainer).find('div[data-label="' + col + '"]').append(list);
-            $(list).droppable({
-                drop: function(event, ui) {
-                    $(this).addClass('ui-state-highlight');
-                }
-            });
         });
         return this;
     },
@@ -65,12 +60,10 @@ window.AppView = Backbone.View.extend({
 
 window.ListView = Backbone.View.extend({
     tagName: 'ul',
-    attributes: {
-        class: 'ui-droppable'
-    },
     initialize: function() {
         var current = this;
         window.console.log('droppable?');
+
         this.collection.on('add', function(todo, collection, options) {
             // Track the index
             window.console.log('tried to add new element at position ' + options.index);
@@ -80,6 +73,13 @@ window.ListView = Backbone.View.extend({
         });
     },
     render: function() {
+        var droppableArgs = {
+            drop: function(event, ui) {
+                window.console.log('fA');
+
+            }
+        }
+        $(this.el).droppable(droppableArgs);
         return this;
     },
 
@@ -97,8 +97,9 @@ window.TodoView = Backbone.View.extend({
     },
     render: function() {
         var draggableOptions = {
-            snap: 'ul',
-            snapMode: 'inner'
+            snap: 'ul.ui-droppable',
+            snapMode: 'inner',
+            revert: 'invalid'
         };
 
         $(this.el).html(_.template(tpl.get('todo'), { todoTitle: this.title }));

@@ -37,6 +37,11 @@ body {
     list-style-type: none;
 }
 
+.list ul.ui-droppable {
+    min-height: 60px;
+    border: 1px solid red;
+}
+
 .list ul li {
     line-height: 60px;
     border-top: 1px solid #888;
