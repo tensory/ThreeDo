@@ -113,7 +113,7 @@ window.CounterView = Backbone.View.extend({
     },
 
     initialize: function() {
-        this.update();
+        this._setTemplate(this._getCountFromSources());
     },
 
     render: function() {
@@ -122,12 +122,16 @@ window.CounterView = Backbone.View.extend({
     },
 
     update: function() {
+        this._setTemplate(this._getCountFromSources());
+        this.render();
+    },
+
+    _setTemplate: function(count) {
         this.template = _.template(tpl.get('counter'),
             {
-                number: this._getCountFromSources()
+                number: count
             }
         );
-        this.render();
     },
 
     // Get the count from all the data sources this instance of Counter knows about
