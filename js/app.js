@@ -62,8 +62,6 @@ window.ListView = Backbone.View.extend({
     tagName: 'ul',
     initialize: function() {
         var current = this;
-        window.console.log('droppable?');
-
         this.collection.on('add', function(todo, collection, options) {
             // Track the index
             window.console.log('tried to add new element at position ' + options.index);
