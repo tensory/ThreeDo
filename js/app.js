@@ -92,7 +92,7 @@ window.ListView = Backbone.View.extend({
     receiveTodoItem: function(element) {
         $(element).detach();
         $(this.el).append(element);
-
+        $(element).show();
     }
 });
 
@@ -111,7 +111,9 @@ window.TodoView = Backbone.View.extend({
             helper: 'clone', // Clone element and delete it at its old parent,
             start: function(event, ui) {
                 dragged = $(this);
+                $(this).hide();
             }
+
         };
 
         $(this.el).html(_.template(tpl.get('todo'), { todoTitle: this.title }));
