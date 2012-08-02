@@ -15,7 +15,8 @@ window.AppView = Backbone.View.extend({
         this.addView = new AddView();
         this.totalCounter = new CounterView();
 
-        _.extend(this, this.createListViews(this.columnNames));
+        this.lists = {};
+        _.extend(this.lists, this.createListViews(this.columnNames));
         // By this point, window.app.todoListView MUST exist in order for 'add' to work!
 
         this.render();
@@ -35,7 +36,7 @@ window.AppView = Backbone.View.extend({
 
         // Add empty lists to columns
         _.each(this.columnNames, function(col) {
-            var list = self[utils.camelCase(col) + 'ListView'].render().el;
+            var list = self.lists[utils.camelCase(col) + 'ListView'].render().el;
             $(listsContainer).find('div[data-label="' + col + '"]').append(list);
         });
         return this;
@@ -156,7 +157,7 @@ window.AddView = Backbone.View.extend({
 
     addToDo: function() {
         // Delegate the list adding action to the ListView
-        window.app.todoListView.insert({title: 'New Todo'});
+        window.app.lists.todoListView.insert({title: 'New Todo'});
     }
 });
 
