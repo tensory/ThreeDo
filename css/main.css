@@ -30,7 +30,6 @@ body {
 }
 
 .list ul {
-    background-color: #FFFFFF;
     margin-bottom: 0;
     margin: 0;
     padding: 0;
@@ -44,6 +43,7 @@ body {
 
 .list ul li {
     line-height: 60px;
+    background-color: #FFFFFF;
     border-top: 1px solid #888;
     margin: 0;
     padding-left: 24px;
