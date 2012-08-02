@@ -81,6 +81,7 @@ window.ListView = Backbone.View.extend({
 
 window.TodoView = Backbone.View.extend({
     title: '',
+    tagName: 'li',
     initialize: function(title) {
         this.title = title;
         this.render();
@@ -88,9 +89,10 @@ window.TodoView = Backbone.View.extend({
     render: function() {
         var params = {
             todoTitle: this.title
-        }
-        // Reassign element to container loaded from template
-        this.el = _.template(tpl.get('todo'), params);
+        };
+
+        $(this.el).html(_.template(tpl.get('todo'), params));
+        $(this.el).draggable();
         return this;
     }
 
