@@ -87,12 +87,13 @@ window.TodoView = Backbone.View.extend({
         this.render();
     },
     render: function() {
-        var params = {
-            todoTitle: this.title
+        var draggableOptions = {
+            snap: 'ul',
+            snapMode: 'inner'
         };
 
-        $(this.el).html(_.template(tpl.get('todo'), params));
-        $(this.el).draggable();
+        $(this.el).html(_.template(tpl.get('todo'), { todoTitle: this.title }));
+        $(this.el).draggable(draggableOptions);
         return this;
     }
 
