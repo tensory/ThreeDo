@@ -73,10 +73,12 @@ window.ListView = Backbone.View.extend({
         });
     },
     render: function() {
+        var current = this;
         var droppableArgs = {
             drop: function(event, ui) {
-                window.console.log('fA');
-
+                // Bind the
+                _.bind(current.receiveItem, this, window.app.dragged);
+                current.receiveTodoItem(window.app.dragged);
             }
         }
         $(this.el).droppable(droppableArgs);
@@ -85,7 +87,13 @@ window.ListView = Backbone.View.extend({
 
     insert: function(todoItem) {
         this.collection.add(todoItem);
+    },
+
+    // Handle receiving a new li element
+    receiveTodoItem: function(element) {
+        $(this.el).append(element);
     }
+
 });
 
 window.TodoView = Backbone.View.extend({
@@ -99,7 +107,11 @@ window.TodoView = Backbone.View.extend({
         var draggableOptions = {
             snap: 'ul.ui-droppable',
             snapMode: 'inner',
-            revert: 'invalid'
+            revert: 'invalid',
+            helper: 'clone', // Clone element and delete it at its old parent,
+            start: function(event, ui) {
+                window.app.dragged = $(this);
+            }
         };
 
         $(this.el).html(_.template(tpl.get('todo'), { todoTitle: this.title }));
