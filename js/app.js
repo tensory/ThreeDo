@@ -21,7 +21,7 @@ window.AppView = Backbone.View.extend({
 
         this.lists = {};
         _.extend(this.lists, this.createListViews(this.columnNames));
-        // By this point, window.app.todoListView MUST exist in order for 'add' to work!
+        // By this point, window.app.lists.todoListView MUST exist in order for 'add' to work!
 
         this.totalCounter = new CounterView({
             model: new Counter({ dataSources: _.values(this.lists) })
@@ -79,14 +79,16 @@ window.ListView = Backbone.View.extend({
 
             var task = new TodoView(todo.get('title'));
             $(current.el).append($(task.el));
+
+            window.app.totalCounter.update();
         });
     },
     render: function() {
         var current = this;
         var droppableArgs = {
             drop: function(event, ui) {
-                _.bind(current.receiveTodoItem, this, dragged);
-                current.receiveTodoItem(dragged);
+                _.bind(current._receiveTodoItem, this, dragged);
+                current._receiveTodoItem(dragged);
             }
         }
         $(this.el).droppable(droppableArgs);
@@ -98,7 +100,7 @@ window.ListView = Backbone.View.extend({
     },
 
     // Handle receiving a new element
-    receiveTodoItem: function(element) {
+    _receiveTodoItem: function(element) {
         $(element).detach();
         $(this.el).append(element);
         $(element).show();
@@ -111,19 +113,32 @@ window.CounterView = Backbone.View.extend({
     },
 
     initialize: function() {
-        this.template = _.template(tpl.get('counter'), { number: '0' });
+        this.update();
         window.console.log(this.model);
     },
 
     render: function() {
         $(this.el).html($(this.template));
-        this.update();
         return this;
     },
 
     update: function() {
-        window.console.log(this.model.get('dataSources'));
+        this.template = _.template(tpl.get('counter'),
+            {
+                number: this._getCountFromSources()
+            }
+        );
+        this.render();
+    },
 
+    // Get the count from all the data sources this instance of Counter knows about
+    _getCountFromSources: function() {
+        var count = 0;
+        window.console.log(this.model.get('dataSources'));
+        _.each(this.model.get('dataSources'), function(view) {
+            count += $(view.el).children('li').length;
+        });
+        return count;
     }
 });
 
