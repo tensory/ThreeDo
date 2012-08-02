@@ -13,6 +13,7 @@ window.AppView = Backbone.View.extend({
     initialize: function() {
         console.log('Initializing app');
         this.addView = new AddView();
+        this.totalCounter = new CounterView();
 
         _.extend(this, this.createListViews(this.columnNames));
         // By this point, window.app.todoListView MUST exist in order for 'add' to work!
@@ -25,6 +26,7 @@ window.AppView = Backbone.View.extend({
     render: function() {
         // todo: DRY
         $(this.el).append(this.addView.render().el);
+        $(this.el).append(this.totalCounter.render().el);
         var self = this;
 
         // Add container for all 3 lists
@@ -99,15 +101,13 @@ window.CounterView = Backbone.View.extend({
         class: 'counter'
     },
 
-    template: _.template()
-
-    source: null,
     initialize: function() {
-        //this.render();
+        this.template = _.template(tpl.get('counter'), { number: '0' });
     },
 
     render: function() {
-
+        $(this.el).html($(this.template));
+        return this;
     },
 
     update: function() {
@@ -202,7 +202,7 @@ var dragged = null;
 
 (function($) {
     $(function() {
-        tpl.loadTemplates(['add', 'todo', 'lists'],
+        tpl.loadTemplates(['add', 'todo', 'counter', 'lists'],
             function() {
                 window.app = new AppView();
             }
