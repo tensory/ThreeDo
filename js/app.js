@@ -35,6 +35,11 @@ window.AppView = Backbone.View.extend({
         _.each(this.columnNames, function(col) {
             var list = self[utils.camelCase(col) + 'ListView'].render().el;
             $(listsContainer).find('div[data-label="' + col + '"]').append(list);
+            $(list).droppable({
+                drop: function(event, ui) {
+                    $(this).addClass('ui-state-highlight');
+                }
+            });
         });
         return this;
     },
@@ -60,8 +65,12 @@ window.AppView = Backbone.View.extend({
 
 window.ListView = Backbone.View.extend({
     tagName: 'ul',
+    attributes: {
+        class: 'ui-droppable'
+    },
     initialize: function() {
         var current = this;
+        window.console.log('droppable?');
         this.collection.on('add', function(todo, collection, options) {
             // Track the index
             window.console.log('tried to add new element at position ' + options.index);
@@ -114,7 +123,7 @@ window.AddView = Backbone.View.extend({
 
     addToDo: function() {
         // Delegate the list adding action to the ListView
-        window.app.todoListView.insert({title: 'New Todo'});
+        window.app.inProcessListView.insert({title: 'New Todo'});
     }
 });
 
