@@ -94,6 +94,27 @@ window.ListView = Backbone.View.extend({
     }
 });
 
+window.CounterView = Backbone.View.extend({
+    attributes: {
+        class: 'counter'
+    },
+
+    template: _.template()
+
+    source: null,
+    initialize: function() {
+        //this.render();
+    },
+
+    render: function() {
+
+    },
+
+    update: function() {
+
+    }
+});
+
 window.TodoView = Backbone.View.extend({
     title: '',
     tagName: 'li',
@@ -106,12 +127,11 @@ window.TodoView = Backbone.View.extend({
             snap: 'ul.ui-droppable',
             snapMode: 'inner',
             revert: 'invalid',
-            helper: 'clone', // Clone element and delete it at its old parent,
+            helper: 'clone', // Clone element and hide it at its old parent
             start: function(event, ui) {
                 dragged = $(this);
                 $(this).hide();
             }
-
         };
 
         $(this.el).html(_.template(tpl.get('todo'), { todoTitle: this.title }));
