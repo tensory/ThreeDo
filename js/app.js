@@ -77,20 +77,18 @@ window.ListView = Backbone.View.extend({
     tagName: 'ul',
     initialize: function() {
         var current = this;
-
-        this.counter = new CounterView({ model: new Counter({ dataSources: [this.el] }) });
+        this.counter = new CounterView({ model: new Counter({ dataSources: [this] }) });
 
         $(this.el).on('dragstart', function(event) {
             var modelId = current._getDraggableModelId(event);
             var dragged = current.collection.getByCid(modelId);
             window.app.draggableModel = dragged;
             current.collection.remove(dragged);
+
+            window.console.log('items in the bukkit ' + current.collection.length);
         });
 
         this.collection.on('add', function(todo, collection, options) {
-            // Track the index
-            window.console.log('tried to add new element at position ' + options.index);
-
             // Give the item an id manually, since no create event is doing that
             var todoModel = _.extend(todo, {
                 id: 'task_' + todo.cid,
@@ -102,6 +100,7 @@ window.ListView = Backbone.View.extend({
             var task = new TodoView(todoModel);
             $(current.el).append($(task.el));
 
+            current.counter.update();
             window.app.totalCounter.update();
         });
     },
@@ -151,7 +150,10 @@ window.CounterView = Backbone.View.extend({
 
     update: function() {
         this._setTemplate(this._getCountFromSources());
+
+        window.console.log(this.model.get('dataSources'));
         this.render();
+        return this;
     },
 
     _setTemplate: function(count) {
