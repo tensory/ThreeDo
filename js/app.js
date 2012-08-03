@@ -62,7 +62,8 @@ window.AppView = Backbone.View.extend({
             lists[camelCasedName] = new ListView({
                 collection: new List(),
                 attributes: {
-                    id: rawName + 'List'
+                    'id': rawName + 'List',
+                    'data-name': rawName
                 }
             });
         });
@@ -103,6 +104,8 @@ window.ListView = Backbone.View.extend({
     },
 
     render: function() {
+
+        this._generateOriginSelectors();
         var current = this;
         var droppableArgs = {
             drop: function(event, ui) {
@@ -113,7 +116,7 @@ window.ListView = Backbone.View.extend({
                     return this;
                 }
             }
-        }
+        };
         $(this.el).droppable(droppableArgs);
         return this;
     },
@@ -131,6 +134,25 @@ window.ListView = Backbone.View.extend({
         }
 
         return $(event.target).attr(idAttr);
+    },
+
+    _generateOriginSelectors: function() {
+
+        var columnRules = this.rules[$(this.el).attr('data-name')],
+            selectors = [],
+            selectorString = 'li[data-origin="%"]';
+
+        _.each(columnRules, function(origin) {
+            selectors.push(selectorString.replace('%', origin));
+        });
+
+        return selectors.join(', ');
+    },
+
+    rules: {
+        'todo' : ['in-process', 'done'],
+        'in-process' : ['todo', 'done'],
+        'done' : ['in-process']
     }
 });
 
@@ -267,7 +289,7 @@ var dragged = null;
             function() {
                 window.app = new AppView();
 
-               // $('#add').trigger('click'); // for testing only
+                $('#add').trigger('click'); // for testing only
             });
     });
 })(jQuery);
