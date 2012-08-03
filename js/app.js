@@ -22,10 +22,11 @@ window.AppView = Backbone.View.extend({
         this.lists = {};
         _.extend(this.lists, this._createListViews(this.columnNames));
         // By this point, window.app.lists.todoListView MUST exist in order for 'add' to work!
-
+            /*
         this.totalCounter = new CounterView({
             model: new Counter({ dataSources: _.values(this.lists) })
         });
+              */
 
         this.render();
     },
@@ -35,7 +36,7 @@ window.AppView = Backbone.View.extend({
     render: function() {
         // todo: DRY
         $(this.el).append(this.addView.render().el);
-        $(this.el).append(this.totalCounter.render().el);
+        //$(this.el).append(this.totalCounter.render().el);
         var self = this;
 
         // Add container for all 3 lists
@@ -78,7 +79,7 @@ window.ListView = Backbone.View.extend({
     initialize: function() {
         var current = this;
 
-        this.counter = new CounterView({ model: new Counter({ dataSources: [this] }) });
+        this.counter = new CounterView({ model: [ this.collection ] });
 
         $(this.el).on('dragstart', function(event) {
             var modelId = current._getDraggableModelId(event);
@@ -107,7 +108,6 @@ window.ListView = Backbone.View.extend({
             drop: function(event, ui) {
                 if (window.app.draggableModel) {
                     current.collection.add(window.app.draggableModel);
-                    current.counter.update();
 
                     window.app.draggableModel = null; // reset
                     return this;
@@ -120,15 +120,14 @@ window.ListView = Backbone.View.extend({
 
     insert: function(todoItem) {
         this.collection.add(todoItem);
-        window.app.totalCounter.update();
-        this.counter.update();
+        //window.app.totalCounter.update();
     },
 
     _getDraggableModelId: function(event) {
         var idAttr = 'data-cid';
 
         if (!($(event.target).attr(idAttr))) {
-            return null;
+            return undefined;
         }
 
         return $(event.target).attr(idAttr);
@@ -136,43 +135,40 @@ window.ListView = Backbone.View.extend({
 });
 
 window.CounterView = Backbone.View.extend({
-    attributes: {
-        class: 'counter'
-    },
-
     initialize: function() {
-        this._setTemplate(this._getCountFromSources());
-        this.model.bind('change', this.update);
-        window.console.log(this.model.get('dataSources'))
+        var current = this;
+        _.each(this.model, function(source) {
+            source.bind('add', current.update, current);
+            source.bind('remove', current.downdate, current);
+        });
+
     },
 
     render: function() {
-        $(this.el).html($(this.template));
         return this;
     },
 
     update: function() {
-        this._setTemplate(this._getCountFromSources());
-        this.render();
+        this._setTotal();
+        window.console.log(this.count);
         return this;
     },
 
-    _setTemplate: function(count) {
-        this.template = _.template(tpl.get('counter'),
-            {
-                number: count
-            }
-        );
+    downdate: function() {
+        this._setTotal();
+        window.console.log(this.count);
+        return this;
     },
 
-    // Get the count from all the data sources this instance of Counter knows about
-    _getCountFromSources: function() {
-        var count = 0;
-        _.each(this.model.get('dataSources'), function(view) {
-            count += $(view.el).children('li').length;
+    _setTotal: function() {
+        var total = 0;
+        _.each(this.model, function(source) {
+            total += source.length;
         });
-        return count;
-    }
+        this.count = total;
+    },
+
+    count: 0
 });
 
 window.TodoView = Backbone.View.extend({
