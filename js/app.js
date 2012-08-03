@@ -139,25 +139,24 @@ window.CounterView = Backbone.View.extend({
         var current = this;
         _.each(this.model, function(source) {
             source.bind('add', current.update, current);
-            source.bind('remove', current.downdate, current);
+            source.bind('remove', current.update, current);
         });
 
+        this.update();
     },
 
     render: function() {
+        this.template = _.template(tpl.get('counter'), {
+            number: this.count
+        });
+
+        $(this.el).html(this.template);
         return this;
     },
 
     update: function() {
         this._setTotal();
-        window.console.log(this.count);
-        return this;
-    },
-
-    downdate: function() {
-        this._setTotal();
-        window.console.log(this.count);
-        return this;
+        this.render();
     },
 
     _setTotal: function() {
