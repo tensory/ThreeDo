@@ -81,44 +81,8 @@ window.ListView = Backbone.View.extend({
         this.counter = new CounterView({ model: new Counter({ dataSources: [this.el] }) });
 
         $(this.el).on('dragstart', function(event) {
-            window.app.activeModelId = current._getDraggableModelId(event);
-
-            if (window.app.activeModelId) {
-                window.console.log(window.app.activeModelId);
-                window.console.log(current.collection);
-                window.console.log(current.collection.getByCid(window.app.activeModelId));
-            }
-        });
-
-        // Binding dragstop listener with on() instead of Backbone.View.events
-        // in order to access View's collection
-        $(this.el).on('dragstop', function(event) {
-            window.console.log('you\'re such a drag');
-            var idAttr = 'data-cid';
-
-            if (!($(event.target).attr(idAttr))) {
-                return false;
-            }
-
-            var identifier = $(event.target).attr(idAttr),
-                newSiblings = $(current.el).children('li'),
-                siblingClientIds = [];
-            if (newSiblings.length > 0) {
-                _.each(newSiblings, function(sib) {
-                    siblingClientIds.push($(sib).attr(idAttr));
-                })
-            }
-
-            if (_.indexOf(siblingClientIds, identifier) < 0) {
-
-            }
-
-            window.console.log(siblingClientIds);
-            // If the element is not already in this collection,
-            // add it here.
-           // if (_.indexOf())
-            //current.collection.add()
-            window.app.activeModelId = null;
+            var modelId = current._getDraggableModelId(event);
+            current.collection.remove(current.collection.getByCid(modelId));
         });
 
         this.collection.on('add', function(todo, collection, options) {
