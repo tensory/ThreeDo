@@ -214,7 +214,14 @@ window.AddView = Backbone.View.extend({
 
     addToDo: function() {
         // Delegate the list adding action to the ListView
-        window.app.lists.todoListView.insert({title: 'New Todo'});
+        var inputId = '#todo-title';
+        if ($(this.template).find(inputId).val().length < 1) {
+            $(inputId).addClass('error');
+        } else {
+            $(inputId).removeClass('error');
+            window.app.lists.todoListView.insert({ title: $(inputId).val() });
+        }
+        return this;
     }
 });
 

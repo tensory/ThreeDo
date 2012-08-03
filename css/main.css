@@ -58,3 +58,7 @@ body {
 .clear hr {
     display: none;
 }
+
+input.error {
+    background-color: #fafad2;
+}
