@@ -22,11 +22,13 @@ window.AppView = Backbone.View.extend({
         this.lists = {};
         _.extend(this.lists, this._createListViews(this.columnNames));
         // By this point, window.app.lists.todoListView MUST exist in order for 'add' to work!
-            /*
-        this.totalCounter = new CounterView({
-            model: new Counter({ dataSources: _.values(this.lists) })
-        });
-              */
+
+        var collections = [];
+        for (l in this.lists) {
+            collections.push(this.lists[l].collection);
+        }
+
+        this.totalCounter = new CounterView({ model: collections, type: 'total' });
 
         this.render();
     },
@@ -36,7 +38,7 @@ window.AppView = Backbone.View.extend({
     render: function() {
         // todo: DRY
         $(this.el).append(this.addView.render().el);
-        //$(this.el).append(this.totalCounter.render().el);
+        $(this.el).append(this.totalCounter.render().el);
         var self = this;
 
         // Add container for all 3 lists
@@ -120,7 +122,6 @@ window.ListView = Backbone.View.extend({
 
     insert: function(todoItem) {
         this.collection.add(todoItem);
-        //window.app.totalCounter.update();
     },
 
     _getDraggableModelId: function(event) {
@@ -137,12 +138,15 @@ window.ListView = Backbone.View.extend({
 window.CounterView = Backbone.View.extend({
     initialize: function() {
         var current = this;
-        _.each(this.model, function(source) {
-            source.bind('add', current.update, current);
-            source.bind('remove', current.update, current);
-        });
 
-        this.update();
+        if (this.model.length) {
+            _.each(this.model, function(source) {
+                source.bind('add', current.update, current);
+                source.bind('remove', current.update, current);
+            });
+
+            this.update();
+        }
     },
 
     render: function() {
