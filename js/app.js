@@ -84,9 +84,15 @@ window.ListView = Backbone.View.extend({
             window.console.log('tried to add new element at position ' + options.index);
 
 
-            var todoModel = new Todo({ title: todo.get('title') });
+            var todoModel = new Todo();
             // Give the item an id manually, since no create event is doing that
-            _.extend(todoModel, { id: todoModel.cid });
+            _.extend(todoModel, {
+                id: 'task_' + todoModel.cid,
+                attributes: {
+                    'data-cid': todoModel.cid,
+                    'title': todo.get('title')
+                }
+            });
             var task = new TodoView(todoModel);
             $(current.el).append($(task.el));
 
