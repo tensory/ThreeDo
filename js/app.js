@@ -77,6 +77,7 @@ window.ListView = Backbone.View.extend({
     tagName: 'ul',
     initialize: function() {
         var current = this;
+
         this.counter = new CounterView({ model: new Counter({ dataSources: [this] }) });
 
         $(this.el).on('dragstart', function(event) {
@@ -106,7 +107,10 @@ window.ListView = Backbone.View.extend({
             drop: function(event, ui) {
                 if (window.app.draggableModel) {
                     current.collection.add(window.app.draggableModel);
+                    current.counter.update();
+
                     window.app.draggableModel = null; // reset
+                    return this;
                 }
             }
         }
@@ -117,6 +121,7 @@ window.ListView = Backbone.View.extend({
     insert: function(todoItem) {
         this.collection.add(todoItem);
         window.app.totalCounter.update();
+        this.counter.update();
     },
 
     _getDraggableModelId: function(event) {
