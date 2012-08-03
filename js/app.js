@@ -1,7 +1,7 @@
 /* Models */
 window.Todo = Backbone.Model.extend({
     defaults: {
-        title: 'Untitled',
+        title: 'Untitled'
     }
 });
 
@@ -142,6 +142,8 @@ window.CounterView = Backbone.View.extend({
 
     initialize: function() {
         this._setTemplate(this._getCountFromSources());
+        this.model.bind('change', this.update);
+        window.console.log(this.model.get('dataSources'))
     },
 
     render: function() {
@@ -151,8 +153,6 @@ window.CounterView = Backbone.View.extend({
 
     update: function() {
         this._setTemplate(this._getCountFromSources());
-
-        window.console.log(this.model.get('dataSources'));
         this.render();
         return this;
     },
