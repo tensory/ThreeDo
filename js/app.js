@@ -69,7 +69,8 @@ window.AppView = Backbone.View.extend({
         return lists;
     },
 
-    columnNames: ['todo', 'in-process', 'done']
+    columnNames: ['todo', 'in-process', 'done'],
+    activeModelId: null
 });
 
 window.ListView = Backbone.View.extend({
@@ -79,14 +80,55 @@ window.ListView = Backbone.View.extend({
 
         this.counter = new CounterView({ model: new Counter({ dataSources: [this.el] }) });
 
+        $(this.el).on('dragstart', function(event) {
+                var idAttr = 'data-cid';
+
+                if (!($(event.target).attr(idAttr))) {
+                    return false;
+                }
+
+                var identifier = $(event.target).attr(idAttr);
+            window.app.activeModelId = $(event.target).attr(idAttr);
+
+        });
+
+        // Binding dragstop listener with on() instead of Backbone.View.events
+        // in order to access View's collection
+        $(this.el).on('dragstop', function(event) {
+            window.console.log('you\'re such a drag');
+            var idAttr = 'data-cid';
+
+            if (!($(event.target).attr(idAttr))) {
+                return false;
+            }
+
+            var identifier = $(event.target).attr(idAttr),
+                newSiblings = $(current.el).children('li'),
+                siblingClientIds = [];
+            if (newSiblings.length > 0) {
+                _.each(newSiblings, function(sib) {
+                    siblingClientIds.push($(sib).attr(idAttr));
+                })
+            }
+
+            if (_.indexOf(siblingClientIds, identifier) < 0) {
+
+            }
+
+            window.console.log(siblingClientIds);
+            // If the element is not already in this collection,
+            // add it here.
+           // if (_.indexOf())
+            //current.collection.add()
+        });
+
         this.collection.on('add', function(todo, collection, options) {
             // Track the index
             window.console.log('tried to add new element at position ' + options.index);
 
-
             var todoModel = new Todo();
             // Give the item an id manually, since no create event is doing that
-            _.extend(todoModel, {
+            var todoModel = _.extend(todoModel, {
                 id: 'task_' + todoModel.cid,
                 attributes: {
                     'data-cid': todoModel.cid,
@@ -107,9 +149,6 @@ window.ListView = Backbone.View.extend({
                 current._receiveTodoItem(dragged);
             }
         }
-
-        window.console.log(this.counter.render().el);
-
         $(this.el).droppable(droppableArgs);
         return this;
     },
@@ -247,11 +286,14 @@ var utils = {
 
 var dragged = null;
 
+// Runner
 (function($) {
     $(function() {
         tpl.loadTemplates(['add', 'todo', 'counter', 'lists'],
             function() {
                 window.app = new AppView();
+
+                $('#add').trigger('click'); // for testing only
             });
     });
 })(jQuery);
