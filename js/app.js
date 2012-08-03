@@ -87,10 +87,6 @@ window.ListView = Backbone.View.extend({
             current.collection.remove(dragged);
         });
 
-        $(this.el).on('dragstop', function(event) {
-            //window.app.draggableModel = null;
-        });
-
         this.collection.on('add', function(todo, collection, options) {
             // Track the index
             window.console.log('tried to add new element at position ' + options.index);
@@ -109,15 +105,11 @@ window.ListView = Backbone.View.extend({
             window.app.totalCounter.update();
         });
     },
+
     render: function() {
         var current = this;
         var droppableArgs = {
             drop: function(event, ui) {
-                /*
-                // rethink this
-                _.bind(current._receiveTodoItem, this, dragged);
-                current._receiveTodoItem(dragged);
-                  */
                 if (window.app.draggableModel) {
                     current.collection.add(window.app.draggableModel);
                     window.app.draggableModel = null; // reset
@@ -130,13 +122,6 @@ window.ListView = Backbone.View.extend({
 
     insert: function(todoItem) {
         this.collection.add(todoItem);
-    },
-
-    // Handle receiving a new element
-    _receiveTodoItem: function(element) {
-        $(element).detach();
-        $(this.el).append(element);
-        $(element).show();
     },
 
     _getDraggableModelId: function(event) {
