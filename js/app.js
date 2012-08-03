@@ -23,12 +23,7 @@ window.AppView = Backbone.View.extend({
         _.extend(this.lists, this._createListViews(this.columnNames));
         // By this point, window.app.lists.todoListView MUST exist in order for 'add' to work!
 
-        var collections = [];
-        for (l in this.lists) {
-            collections.push(this.lists[l].collection);
-        }
-
-        this.totalCounter = new CounterView({ model: collections, type: 'total' });
+        this.totalCounter = new TotalCounterView({ model: [] });
 
         this.render();
     },
@@ -174,6 +169,25 @@ window.CounterView = Backbone.View.extend({
     count: 0
 });
 
+window.TotalCounterView = _.extend(window.CounterView, {
+    initialize: function() {
+        return this;
+    },
+
+    render: function() {
+        alert(this.count);
+    },
+
+    update: function() {
+        this.count++;
+        this.render();
+    },
+
+    _setTotal: undefined,
+
+    count: 0
+});
+
 window.TodoView = Backbone.View.extend({
     title: '',
     tagName: 'li',
@@ -218,6 +232,7 @@ window.AddView = Backbone.View.extend({
             $(inputId).addClass('error');
         } else {
             $(inputId).removeClass('error');
+            window.app.totalCounter.update();
             window.app.lists.todoListView.insert({ title: $(inputId).val() });
         }
         return this;
