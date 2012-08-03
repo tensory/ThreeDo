@@ -81,15 +81,13 @@ window.ListView = Backbone.View.extend({
         this.counter = new CounterView({ model: new Counter({ dataSources: [this.el] }) });
 
         $(this.el).on('dragstart', function(event) {
-                var idAttr = 'data-cid';
+            window.app.activeModelId = current._getDraggableModelId(event);
 
-                if (!($(event.target).attr(idAttr))) {
-                    return false;
-                }
-
-                var identifier = $(event.target).attr(idAttr);
-            window.app.activeModelId = $(event.target).attr(idAttr);
-
+            if (window.app.activeModelId) {
+                window.console.log(window.app.activeModelId);
+                window.console.log(current.collection);
+                window.console.log(current.collection.getByCid(window.app.activeModelId));
+            }
         });
 
         // Binding dragstop listener with on() instead of Backbone.View.events
@@ -120,18 +118,18 @@ window.ListView = Backbone.View.extend({
             // add it here.
            // if (_.indexOf())
             //current.collection.add()
+            window.app.activeModelId = null;
         });
 
         this.collection.on('add', function(todo, collection, options) {
             // Track the index
             window.console.log('tried to add new element at position ' + options.index);
 
-            var todoModel = new Todo();
             // Give the item an id manually, since no create event is doing that
-            var todoModel = _.extend(todoModel, {
-                id: 'task_' + todoModel.cid,
+            var todoModel = _.extend(todo, {
+                id: 'task_' + todo.cid,
                 attributes: {
-                    'data-cid': todoModel.cid,
+                    'data-cid': todo.cid,
                     'title': todo.get('title')
                 }
             });
@@ -145,6 +143,7 @@ window.ListView = Backbone.View.extend({
         var current = this;
         var droppableArgs = {
             drop: function(event, ui) {
+                // rethink this
                 _.bind(current._receiveTodoItem, this, dragged);
                 current._receiveTodoItem(dragged);
             }
@@ -162,6 +161,16 @@ window.ListView = Backbone.View.extend({
         $(element).detach();
         $(this.el).append(element);
         $(element).show();
+    },
+
+    _getDraggableModelId: function(event) {
+        var idAttr = 'data-cid';
+
+        if (!($(event.target).attr(idAttr))) {
+            return null;
+        }
+
+        return $(event.target).attr(idAttr);
     }
 });
 
@@ -213,12 +222,8 @@ window.TodoView = Backbone.View.extend({
         var draggableOptions = {
             snap: 'ul.ui-droppable',
             snapMode: 'inner',
-            revert: 'invalid',
-            helper: 'clone', // Clone element and hide it at its old parent
-            start: function(event, ui) {
-                dragged = $(this);
-                $(this).hide();
-            }
+            revert: 'invalid'
+
         };
         $(this.el).html(_.template(tpl.get('todo'), { todoTitle: this.attributes.title }));
         $(this.el).draggable(draggableOptions);
@@ -293,7 +298,7 @@ var dragged = null;
             function() {
                 window.app = new AppView();
 
-                $('#add').trigger('click'); // for testing only
+               // $('#add').trigger('click'); // for testing only
             });
     });
 })(jQuery);
