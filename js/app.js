@@ -95,6 +95,7 @@ window.ListView = Backbone.View.extend({
                 id: 'task_' + todo.cid,
                 attributes: {
                     'data-cid': todo.cid,
+                    'data-origin': $(current.el).attr('data-name'),
                     'title': todo.get('title')
                 }
             });
@@ -194,6 +195,9 @@ window.CounterView = Backbone.View.extend({
 window.TodoView = Backbone.View.extend({
     title: '',
     tagName: 'li',
+    attributes: {
+        'data-origin': ''
+    },
     initialize: function(title) {
         this.title = title;
         this.render();
