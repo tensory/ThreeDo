@@ -84,8 +84,6 @@ window.ListView = Backbone.View.extend({
             var dragged = current.collection.getByCid(modelId);
             window.app.draggableModel = dragged;
             current.collection.remove(dragged);
-
-            window.console.log('items in the bukkit ' + current.collection.length);
         });
 
         this.collection.on('add', function(todo, collection, options) {
@@ -99,9 +97,6 @@ window.ListView = Backbone.View.extend({
             });
             var task = new TodoView(todoModel);
             $(current.el).append($(task.el));
-
-            current.counter.update();
-            window.app.totalCounter.update();
         });
     },
 
@@ -121,6 +116,7 @@ window.ListView = Backbone.View.extend({
 
     insert: function(todoItem) {
         this.collection.add(todoItem);
+        window.app.totalCounter.update();
     },
 
     _getDraggableModelId: function(event) {
