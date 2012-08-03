@@ -104,7 +104,6 @@ window.ListView = Backbone.View.extend({
     },
 
     render: function() {
-
         this._generateOriginSelectors();
         var current = this;
         var droppableArgs = {
@@ -113,9 +112,10 @@ window.ListView = Backbone.View.extend({
                     current.collection.add(window.app.draggableModel);
 
                     window.app.draggableModel = null; // reset
-                    return this;
                 }
-            }
+                return this;
+            },
+            accept: this._generateOriginSelectors()
         };
         $(this.el).droppable(droppableArgs);
         return this;
@@ -123,7 +123,6 @@ window.ListView = Backbone.View.extend({
 
     insert: function(todoItem) {
         this.collection.add(todoItem);
-        //window.app.totalCounter.update();
     },
 
     _getDraggableModelId: function(event) {
