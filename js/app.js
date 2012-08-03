@@ -70,7 +70,7 @@ window.AppView = Backbone.View.extend({
     },
 
     columnNames: ['todo', 'in-process', 'done'],
-    activeModelId: null
+    draggableModel: null
 });
 
 window.ListView = Backbone.View.extend({
@@ -82,7 +82,13 @@ window.ListView = Backbone.View.extend({
 
         $(this.el).on('dragstart', function(event) {
             var modelId = current._getDraggableModelId(event);
-            current.collection.remove(current.collection.getByCid(modelId));
+            var dragged = current.collection.getByCid(modelId);
+            window.app.draggableModel = dragged;
+            current.collection.remove(dragged);
+        });
+
+        $(this.el).on('dragstop', function(event) {
+            //window.app.draggableModel = null;
         });
 
         this.collection.on('add', function(todo, collection, options) {
@@ -107,9 +113,15 @@ window.ListView = Backbone.View.extend({
         var current = this;
         var droppableArgs = {
             drop: function(event, ui) {
+                /*
                 // rethink this
                 _.bind(current._receiveTodoItem, this, dragged);
                 current._receiveTodoItem(dragged);
+                  */
+                if (window.app.draggableModel) {
+                    current.collection.add(window.app.draggableModel);
+                    window.app.draggableModel = null; // reset
+                }
             }
         }
         $(this.el).droppable(droppableArgs);
@@ -186,8 +198,11 @@ window.TodoView = Backbone.View.extend({
         var draggableOptions = {
             snap: 'ul.ui-droppable',
             snapMode: 'inner',
-            revert: 'invalid'
-
+            revert: 'invalid',
+            helper: 'clone',
+            start: function(event) {
+                $(this).detach();
+            }
         };
         $(this.el).html(_.template(tpl.get('todo'), { todoTitle: this.attributes.title }));
         $(this.el).draggable(draggableOptions);
