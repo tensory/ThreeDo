@@ -112,7 +112,6 @@ window.ListView = Backbone.View.extend({
 
                     // Reset the header on the LI that was dropped
                     // to correctly signal origin.
-                    window.console.log(event);
                     if ($(event.srcElement).attr('data-origin')) {
                         // Allow dropping onto self
                         $(event.toElement).attr('data-origin', current.attributes['data-name']);
@@ -120,9 +119,17 @@ window.ListView = Backbone.View.extend({
 
                     window.app.draggableModel = null; // reset
                 }
-                return this;
             },
-            accept: this._generateOriginSelectors()
+            accept: this._generateOriginSelectors(),
+            over: function() {
+                // Make the drop zone bigger
+                var height = $(current.el).height();
+                $(current.el).css('height', height + current.minElementHeight + 'px');
+            },
+            out: function() {
+                // Return drop zone to its default height
+                $(current.el).css('height', current.collection.models.length * current.minElementHeight + 'px');
+            }
         };
         $(this.el).droppable(droppableArgs);
         return this;
@@ -131,6 +138,8 @@ window.ListView = Backbone.View.extend({
     insert: function(todoItem) {
         this.collection.add(todoItem);
     },
+
+    minElementHeight: 60,
 
     _getDraggableModelId: function(event) {
         var idAttr = 'data-cid';
@@ -284,7 +293,7 @@ var tpl = {
 
         var loadTemplate = function (index) {
             var name = names[index];
-            console.log('Loading template: ' + name);
+            window.console.log('Loading template: ' + name);
             $.get('tpl/' + name + '.html', function (data) {
                 that.templates[name] = data;
                 index++;
