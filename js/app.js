@@ -271,10 +271,14 @@ window.AddView = Backbone.View.extend({
     },
 
     events: {
-        'click #add': "addToDo"
+        'click #add': "addToDo",
+        'mousedown #add': "_mouseDown",
+        'mouseup #add': "_mouseUp"
     },
 
-    addToDo: function() {
+    addToDo: function(event) {
+        event.preventDefault();
+
         // Delegate the list adding action to the ListView
         var inputId = '#todo-title';
         if ($(this.template).find(inputId).val().length < 1) {
@@ -285,6 +289,14 @@ window.AddView = Backbone.View.extend({
             window.app.lists.todoListView.insert({ title: $(inputId).val() });
         }
         return this;
+    },
+
+    _mouseDown: function(event) {
+        $(event.target).addClass('down');
+    },
+
+    _mouseUp: function(event) {
+        $(event.target).removeClass('down');
     }
 });
 
