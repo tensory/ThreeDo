@@ -59,7 +59,8 @@ window.AppView = Backbone.View.extend({
             lists[camelCasedName] = new ListView({
                 collection: new List(),
                 attributes: {
-                    id: rawName + 'List'
+                    'id': rawName + 'List',
+                    'data-name': rawName
                 }
             });
         });
@@ -91,6 +92,7 @@ window.ListView = Backbone.View.extend({
                 id: 'task_' + todo.cid,
                 attributes: {
                     'data-cid': todo.cid,
+                    'data-origin': $(current.el).attr('data-name'),
                     'title': todo.get('title')
                 }
             });
@@ -100,17 +102,28 @@ window.ListView = Backbone.View.extend({
     },
 
     render: function() {
+        this._generateOriginSelectors();
         var current = this;
         var droppableArgs = {
             drop: function(event, ui) {
                 if (window.app.draggableModel) {
+                    // Add it to our collection
                     current.collection.add(window.app.draggableModel);
 
+                    // Reset the header on the LI that was dropped
+                    // to correctly signal origin.
+                    window.console.log(event);
+                    if ($(event.srcElement).attr('data-origin')) {
+                        // Allow dropping onto self
+                        $(event.toElement).attr('data-origin', current.attributes['data-name']);
+                    }
+
                     window.app.draggableModel = null; // reset
-                    return this;
                 }
-            }
-        }
+                return this;
+            },
+            accept: this._generateOriginSelectors()
+        };
         $(this.el).droppable(droppableArgs);
         return this;
     },
@@ -127,6 +140,25 @@ window.ListView = Backbone.View.extend({
         }
 
         return $(event.target).attr(idAttr);
+    },
+
+    _generateOriginSelectors: function() {
+
+        var columnRules = this.rules[$(this.el).attr('data-name')],
+            selectors = [],
+            selectorString = 'li[data-origin="%"]';
+
+        _.each(columnRules, function(origin) {
+            selectors.push(selectorString.replace('%', origin));
+        });
+
+        return selectors.join(', ');
+    },
+
+    rules: {
+        'todo' : ['todo', 'in-process'],
+        'in-process' : ['todo', 'in-process', 'done'],
+        'done' : ['in-process', 'done']
     }
 });
 
@@ -191,6 +223,9 @@ window.TotalCounterView = _.extend(window.CounterView, {
 window.TodoView = Backbone.View.extend({
     title: '',
     tagName: 'li',
+    attributes: {
+        'data-origin': ''
+    },
     initialize: function(title) {
         this.title = title;
         this.render();
@@ -286,7 +321,7 @@ var dragged = null;
             function() {
                 window.app = new AppView();
 
-               // $('#add').trigger('click'); // for testing only
+                $('#add').trigger('click'); // for testing only
             });
     });
 })(jQuery);
