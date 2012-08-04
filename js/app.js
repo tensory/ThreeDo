@@ -110,7 +110,16 @@ window.ListView = Backbone.View.extend({
         var droppableArgs = {
             drop: function(event, ui) {
                 if (window.app.draggableModel) {
+                    // Add it to our collection
                     current.collection.add(window.app.draggableModel);
+
+                    // Reset the header on the LI that was dropped
+                    // to correctly signal origin.
+                    window.console.log(event);
+                    if ($(event.srcElement).attr('data-origin')) {
+                        // Allow dropping onto self
+                        $(event.toElement).attr('data-origin', current.attributes['data-name']);
+                    }
 
                     window.app.draggableModel = null; // reset
                 }
@@ -150,9 +159,9 @@ window.ListView = Backbone.View.extend({
     },
 
     rules: {
-        'todo' : ['in-process', 'done'],
-        'in-process' : ['todo', 'done'],
-        'done' : ['in-process']
+        'todo' : ['todo', 'in-process'],
+        'in-process' : ['todo', 'in-process', 'done'],
+        'done' : ['in-process', 'done']
     }
 });
 
