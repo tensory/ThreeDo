@@ -285,6 +285,7 @@ window.AddView = Backbone.View.extend({
             $(inputId).removeClass('error');
             this.totalCounter.update();
             window.app.lists.todoListView.insert({ title: $(inputId).val() });
+            $(inputId).val('');
         }
         return this;
     },
