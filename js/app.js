@@ -270,21 +270,19 @@ window.AddView = Backbone.View.extend({
     },
 
     events: {
-        'click #add': "addToDo",
+        'click #add': "_submitClick",
         'mousedown #add': "_mouseDown",
         'mouseup #add': "_mouseUp",
-        'keydown #todo-title': "_clearError"
+        'keydown #todo-title': "_submitKey"
     },
 
     addToDo: function(event) {
-        event.preventDefault();
-
         var inputId = '#todo-title';
         // Delegate the list adding action to the ListView
         if ($(this.template).find(inputId).val().length < 1) {
             $(inputId).addClass('error');
         } else {
-            this._clearError();
+            $(inputId).removeClass('error');
             this.totalCounter.update();
             window.app.lists.todoListView.insert({ title: $(inputId).val() });
         }
@@ -299,8 +297,16 @@ window.AddView = Backbone.View.extend({
         $(event.target).removeClass('down');
     },
 
-    _clearError: function(event) {
-        $(event.target).removeClass('error');
+    _submitClick: function(e) {
+        e.preventDefault();
+        this.addToDo(e);
+    },
+
+    _submitKey: function(e) {
+        $(e.target).removeClass('error');
+        if (e.keyCode == 13) {
+            this.addToDo(e);
+        }
     }
 });
 
