@@ -23,7 +23,6 @@ window.AppView = Backbone.View.extend({
         _.extend(this.lists, this._createListViews(this.columnNames));
         // By this point, window.app.lists.todoListView MUST exist in order for 'add' to work!
 
-        this.totalCounter = new TotalCounterView({ model: [] });
 
         this.render();
     },
@@ -32,7 +31,7 @@ window.AppView = Backbone.View.extend({
 
     render: function() {
         $(this.el).append(this.addView.render().el);
-        $(this.el).append(this.totalCounter.render().el);
+
         var self = this;
 
         // Add container for all 3 lists
@@ -44,7 +43,7 @@ window.AppView = Backbone.View.extend({
                 listContainer = $(listsContainer).find('div[data-label="' + col + '"]');
 
             // Add counter to the list view
-            listContainer.prepend(self.lists[listViewName].counter.render().el);
+            listContainer.find('h1').prepend(self.lists[listViewName].counter.render().el);
             listContainer.append(self.lists[listViewName].render().el);
         });
         return this;
@@ -163,7 +162,7 @@ window.ListView = Backbone.View.extend({
     },
 
     rules: {
-        'todo' : ['todo', 'in-process'],
+        'todo' : ['todo', 'in-process', 'done'],
         'in-process' : ['todo', 'in-process', 'done'],
         'done' : ['in-process', 'done']
     }
@@ -256,12 +255,18 @@ window.TodoView = Backbone.View.extend({
 });
 
 window.AddView = Backbone.View.extend({
+    attributes: {
+        class: 'header'
+    },
+
     initialize: function() {
         this.template = _.template(tpl.get('add'));
+        this.totalCounter = new TotalCounterView({ model: [] });
     },
 
     render: function() {
         $(this.el).html(this.template);
+        $(this.el).append(this.totalCounter.render().el);
         return this;
     },
 
@@ -276,7 +281,7 @@ window.AddView = Backbone.View.extend({
             $(inputId).addClass('error');
         } else {
             $(inputId).removeClass('error');
-            window.app.totalCounter.update();
+            this.totalCounter.update();
             window.app.lists.todoListView.insert({ title: $(inputId).val() });
         }
         return this;

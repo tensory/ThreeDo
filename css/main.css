@@ -3,8 +3,9 @@ html, body {
 }
 
 body {
+    background-color: #bbb;
+    font-family: 'Helvetica Neue', 'Helvetica', 'sans-serif';
     font-size: 14px;
-    background-color: #2f4f4f;
 }
 
 #lists {
@@ -18,11 +19,14 @@ body {
     width: 390px;
     float: left;
     margin-right: 10px;
-    background-color: #faf0e6;
 }
 
 .list h1 {
-    padding-left: 24px;
+    line-height: 40px;
+    font-size: 1.285714em; /* 18 / 14 */
+    background-color: #aaa;
+    padding: 8px 8px 8px 24px;
+    margin: 0;
 }
 
 .list:last-of-type {
@@ -34,17 +38,20 @@ body {
     margin: 0;
     padding: 0;
     list-style-type: none;
+    background-color: #bbb;
 }
 
 .list ul.ui-droppable {
     min-height: 60px;
-    border: 1px solid red;
 }
 
 .list ul li {
     line-height: 60px;
     width: 366px;
     background-color: #FFFFFF;
+    color: #777;
+    font-weight: 200;
+    letter-spacing: 0.05em;
     border-top: 1px solid #888;
     margin: 0;
     padding-left: 24px;
@@ -52,7 +59,32 @@ body {
 }
 
 div.counter {
-   float: right;
+    float: right;
+    width: 40px;
+    background-color: #fff;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    margin-right: 4px;
+    margin-top: 2px;
+    line-height: 1em;
+    font-size: 14px;
+    text-align: center;
+    padding: 4px;
+}
+
+div.counter span {
+    display: block;
+}
+div.counter .numeral {
+    font-size: 1.142857em; /* 16 / 14 */
+    font-weight: bold;
+}
+
+div.counter .number-label {
+    font-size: 0.6em;
+    font-weight: normal;
+
 }
 
 .clear {
