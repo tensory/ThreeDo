@@ -184,6 +184,10 @@ window.CounterView = Backbone.View.extend({
         }
     },
 
+    attributes: {
+        class: 'counter'
+    },
+
     render: function() {
         this.template = _.template(tpl.get('counter'), {
             number: this.count
@@ -209,23 +213,13 @@ window.CounterView = Backbone.View.extend({
     count: 0
 });
 
-window.TotalCounterView = _.extend(window.CounterView, {
-    initialize: function() {
-        return this;
-    },
-
-    render: function() {
-        alert(this.count);
-    },
-
+window.TotalCounterView = CounterView.extend({
     update: function() {
         this.count++;
         this.render();
     },
 
-    _setTotal: undefined,
-
-    count: 0
+    _setTotal: undefined
 });
 
 window.TodoView = Backbone.View.extend({

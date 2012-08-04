@@ -4,7 +4,7 @@ html, body {
 
 body {
     font-size: 14px;
-    /*background-color: #AAAAAA;*/
+    background-color: #2f4f4f;
 }
 
 #lists {
@@ -49,6 +49,10 @@ body {
     margin: 0;
     padding-left: 24px;
 
+}
+
+div.counter {
+   float: right;
 }
 
 .clear {
