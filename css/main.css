@@ -25,6 +25,7 @@ body {
     line-height: 40px;
     font-size: 1.285714em; /* 18 / 14 */
     background-color: #aaa;
+    color: #fff;
     padding: 8px 8px 8px 24px;
     margin: 0;
 }
@@ -60,17 +61,33 @@ body {
 
 div.counter {
     float: right;
-    width: 40px;
+    width: 50px;
     background-color: #fff;
+    color: #000;
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
     border-radius: 3px;
     margin-right: 4px;
-    margin-top: 2px;
+    margin-top: 0;
     line-height: 1em;
     font-size: 14px;
     text-align: center;
     padding: 4px;
+}
+
+.header {
+    width: 1200px;
+    margin: 0 auto;
+    line-height: 70px;
+    position: relative;
+}
+
+.header .counter {
+    float: none;
+    position: absolute;
+    top: 50%;
+    right: 18px;
+    margin-top: -20px;
 }
 
 div.counter span {
@@ -78,11 +95,14 @@ div.counter span {
 }
 div.counter .numeral {
     font-size: 1.142857em; /* 16 / 14 */
+    line-height: 1.2em;
     font-weight: bold;
 }
 
 div.counter .number-label {
-    font-size: 0.6em;
+    font-size: 0.62em;
+    text-transform: uppercase;
+    color: #888;
     font-weight: normal;
 
 }
