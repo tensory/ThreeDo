@@ -273,18 +273,19 @@ window.AddView = Backbone.View.extend({
     events: {
         'click #add': "addToDo",
         'mousedown #add': "_mouseDown",
-        'mouseup #add': "_mouseUp"
+        'mouseup #add': "_mouseUp",
+        'keydown #todo-title': "_clearError"
     },
 
     addToDo: function(event) {
         event.preventDefault();
 
-        // Delegate the list adding action to the ListView
         var inputId = '#todo-title';
+        // Delegate the list adding action to the ListView
         if ($(this.template).find(inputId).val().length < 1) {
             $(inputId).addClass('error');
         } else {
-            $(inputId).removeClass('error');
+            this._clearError();
             this.totalCounter.update();
             window.app.lists.todoListView.insert({ title: $(inputId).val() });
         }
@@ -297,6 +298,10 @@ window.AddView = Backbone.View.extend({
 
     _mouseUp: function(event) {
         $(event.target).removeClass('down');
+    },
+
+    _clearError: function(event) {
+        $(event.target).removeClass('error');
     }
 });
 
