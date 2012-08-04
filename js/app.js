@@ -31,7 +31,6 @@ window.AppView = Backbone.View.extend({
     el: 'body',
 
     render: function() {
-        // todo: DRY
         $(this.el).append(this.addView.render().el);
         $(this.el).append(this.totalCounter.render().el);
         var self = this;
@@ -40,13 +39,13 @@ window.AppView = Backbone.View.extend({
         var listsContainer = $(tpl.get('lists'));
         $(this.el).append(listsContainer);
 
-        // Add empty lists to columns
-        // Wow this is gross. Clean it up.
         _.each(this.columnNames, function(col) {
-            var list = self.lists[utils.camelCase(col) + 'ListView'].render().el,
+            var listViewName = utils.camelCase(col) + 'ListView',
                 listContainer = $(listsContainer).find('div[data-label="' + col + '"]');
-            listContainer.find('h1').after(self.lists[utils.camelCase(col) + 'ListView'].counter.render().el);
-            listContainer.append(list);
+
+            // Add counter to the list view
+            listContainer.prepend(self.lists[listViewName].counter.render().el);
+            listContainer.append(self.lists[listViewName].render().el);
         });
         return this;
     },
@@ -293,7 +292,6 @@ var tpl = {
         var that = this;
         var loadTemplate = function (index) {
             var name = names[index];
-            window.console.log('Loading template: ' + name);
             $.get('tpl/' + name + '.html', function (data) {
                 that.templates[name] = data;
                 index++;
