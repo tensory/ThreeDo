@@ -16,13 +16,12 @@ window.Counter = Backbone.Model.extend({
 /* Views */
 window.AppView = Backbone.View.extend({
     initialize: function() {
-        console.log('Initializing app');
+        // Initializing app
         this.addView = new AddView();
 
         this.lists = {};
         _.extend(this.lists, this._createListViews(this.columnNames));
         // By this point, window.app.lists.todoListView MUST exist in order for 'add' to work!
-
 
         this.render();
     },
