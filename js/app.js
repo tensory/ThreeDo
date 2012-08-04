@@ -113,7 +113,6 @@ window.ListView = Backbone.View.extend({
                     // Reset the header on the LI that was dropped
                     // to correctly signal origin.
                     if ($(event.srcElement).attr('data-origin')) {
-                        // Allow dropping onto self
                         $(event.toElement).attr('data-origin', current.attributes['data-name']);
                     }
 
@@ -246,7 +245,7 @@ window.TodoView = Backbone.View.extend({
             revert: 'invalid',
             helper: 'clone',
             start: function(event) {
-                $(this).detach();
+                $(this).hide();
             }
         };
         $(this.el).html(_.template(tpl.get('todo'), { todoTitle: this.attributes.title }));
@@ -290,7 +289,6 @@ var tpl = {
 
     loadTemplates: function(names, callback) {
         var that = this;
-
         var loadTemplate = function (index) {
             var name = names[index];
             window.console.log('Loading template: ' + name);
