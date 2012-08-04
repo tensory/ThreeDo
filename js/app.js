@@ -236,10 +236,18 @@ window.TodoView = Backbone.View.extend({
         var draggableOptions = {
             snap: 'ul.ui-droppable',
             snapMode: 'inner',
-            revert: 'invalid',
+            revert: function(valid) {
+                if (!valid) {
+                    // Add it back to the collection
+                    // Get collection name to add it back to
+                    var origin = $(this).attr('data-origin');
+                    origin = utils.camelCase(origin) + 'ListView';
+                    window.app.lists[origin].insert({ 'title' : $(this).text() });
+                }
+            },
             helper: 'clone',
             start: function(event) {
-                $(this).hide();
+                $(this).detach();
             }
         };
         $(this.el).html(_.template(tpl.get('todo'), { todoTitle: this.attributes.title }));
@@ -321,8 +329,6 @@ var dragged = null;
         tpl.loadTemplates(['add', 'todo', 'counter', 'lists'],
             function() {
                 window.app = new AppView();
-
-                $('#add').trigger('click'); // for testing only
             });
     });
 })(jQuery);
